@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>阿斯拉語音助理</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #0b1220;
+color: #fff;
+text-align: center;
+padding: 30px;
+}
+button {
+font-size: 20px;
+padding: 12px 25px;
+border: none;
+border-radius: 8px;
+background: #00e5ff;
+cursor: pointer;
+}
+#log {
+margin-top: 20px;
+background: #111;
+padding: 15px;
+border-radius: 10px;
+min-height: 120px;
+}
+</style>
+</head>
+<body>
+
+<h1>🤖 阿斯拉 Asura</h1>
+<p>點擊按鈕後對我說話</p>
+<button onclick="startAsura()">🎤 啟動阿斯拉</button>
+
+<div id="log"></div>
+
+<script>
+const log = document.getElementById("log");
+
+const SpeechRecognition =
+window.SpeechRecognition || window.webkitSpeechRecognition;
+
+const recognition = new SpeechRecognition();
+recognition.lang = "zh-TW";
+recognition.continuous = false;
+
+function speak(text) {
+const utter = new SpeechSynthesisUtterance(text);
+utter.lang = "zh-TW";
+speechSynthesis.speak(utter);
+}
+
+function addLog(text) {
+log.innerHTML += `<p>${text}</p>`;
+}
+
+function startAsura() {
+addLog("🎤 阿斯拉：正在聆聽...");
+recognition.start();
+}
+
+recognition.onresult = (event) => {
+const userText = event.results[0][0].transcript;
+addLog("🧑 你：" + userText);
+
+let reply = "我聽不太懂，可以再說一次嗎？";
+
+if (userText.includes("你好")) {
+reply = "你好，我是阿斯拉。";
+} 
+else if (userText.includes("你是誰")) {
+reply = "我是你的專屬語音助理，阿斯拉。";
+}
+else if (userText.includes("幾點")) {
+const now = new Date();
+reply = `現在時間是 ${now.getHours()} 點 ${now.getMinutes()} 分`;
+}
+else if (userText.includes("謝謝")) {
+reply = "不客氣，隨時呼叫我。";
+}
+
+addLog("🤖 阿斯拉：" + reply);
+speak(reply);
+};
+
+recognition.onerror = () => {
+addLog("⚠️ 語音辨識失敗，請再試一次");
+};
+</script>
+
+</body>
+</html>
